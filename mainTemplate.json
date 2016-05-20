@@ -1,0 +1,596 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "VirtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_v2",
+      "metadata": {
+        "description": "Virtual Machine size selection"
+      }
+    },
+    "StorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS Name for the Storage Account where the Virtual Machine's disks will be placed."
+      }
+    },
+    "StorageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "Storage Account Type."
+      }
+    },
+    "storageAccountNewOrExisting": {
+      "type": "string",
+      "defaultValue": "new",
+      "allowedValues": [
+        "new",
+        "existing"
+      ],
+      "metadata": {
+        "description": "Identifies whether to use new or existing Storage Account"
+      }
+    },
+    "publicIPNewOrExistingOrNone": {
+      "type": "string",
+      "defaultValue": "new",
+      "allowedValues": [
+        "new",
+        "existing",
+        "none"
+      ],
+      "metadata": {
+        "description": "Whether to use a public IP and if so whether it is new"
+      }
+    },
+    "publicIP2NewOrExistingOrNone": {
+      "type": "string",
+      "defaultValue": "new",
+      "allowedValues": [
+        "new",
+        "existing",
+        "none"
+      ],
+      "metadata": {
+        "description": "Whether to use a public IP and if so whether it is new"
+      }
+    },
+    "vnetNewOrExisting": {
+      "type": "string",
+      "defaultValue": "new",
+      "allowedValues": [
+        "new",
+        "existing"
+      ],
+      "metadata": {
+        "description": "Identify whether to use a new or existing vnet"
+      }
+    },
+    "storageAccountExistingRG": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group containing existing storage account"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for the Virtual Machine."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+    "uniqueDnsPrefixForPublicIP": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Unique DNS Prefix for the First Public IP used to access the Virtual Machine."
+      }
+    },
+     "uniqueDnsPrefixForPublicIP2": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Unique DNS Prefix for the Second Public IP used to access the Virtual Machine."
+      }
+    },
+    "virtualnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure virtual network."
+      }
+    },
+    "publicIPAddressName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of Public IP address element."
+      }
+    },
+    "publicIPAddressResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource group to which the Public IP belongs."
+      }
+    },
+    "publicIPAddress2Name": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of Public IP address element."
+      }
+    },
+    "publicIPAddress2ResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource group to which the Public IP belongs."
+      }
+    },
+    "publicIPAddressType": {
+      "type": "string",
+      "defaultValue": "Dynamic",
+      "allowedValues": [
+        "Dynamic",
+        "Static"
+      ],
+      "metadata": {
+        "description": "Type of public IP address"
+      }
+    },
+    "vmNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for FortiGate virtual appliance."
+      }
+    },
+    "virtualNetworkExistingRGName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Identifies whether to use new or existing Storage Account"
+      }
+    },
+    "virtualNetworkAddressPrefix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Address prefix"
+      }
+    },
+    "Subnet1Prefix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet 1 Prefix"
+      }
+    },
+    "Subnet1Name": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet 1 Name"
+      }
+    },
+    "Subnet2Prefix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet 2 Prefix"
+      }
+    },
+    "Subnet2Name": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet 2 Name"
+      }
+    },
+    "fortiGateIP1": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP for public facing NIC of the FortiGate virtual appliance."
+      }
+    },
+    "fortiGateIP2": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP for protected network facing NIC of the FortiGate virtual appliance."
+      }
+    },
+    "fortiGateBIP1": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP for public facing NIC of the second FortiGate virtual appliance."
+      }
+    },
+    "fortiGateBIP2": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP for protected network facing NIC of the second FortiGate virtual appliance."
+      }
+    },
+    "artifactsBaseUrl": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/fortinetclouddev/FortiGate-HA-for-Azure/master",
+      "metadata": {
+        "description": "Base URL of the solution template gallery package",
+        "artifactsBaseUrl": ""
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "location"
+      }
+    }
+  },
+  "variables": {
+    "storageAccountType": "[parameters('StorageAccountType')]",
+    "vmStorageAccountContainerName": "vhds",
+
+    "VNetName": "[parameters('virtualnetName')]",
+    "Subnet1Name": "[parameters('Subnet1Name')]",
+    "Subnet2Name": "[parameters('Subnet2Name')]",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('VNetName'))]",
+    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', variables('Subnet1Name'))]",
+    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', variables('Subnet2Name'))]",
+
+    "VNetAddressPrefix": "[parameters('virtualNetworkAddressPrefix')]",
+    "Subnet1Prefix": "[parameters('Subnet1Prefix')]",
+    "Subnet2Prefix": "[parameters('Subnet2Prefix')]",
+
+    "vmName": "[concat(parameters('vmNamePrefix'),'-A')]",
+    "vm2Name": "[concat(parameters('vmNamePrefix'),'-B')]",
+
+    "routeTable1Name": "[concat(variables('vmName'),'PublicFacingSubnetRoutes')]",
+    "routeTable2Name": "[concat(variables('vmName'),'ProtectedSubnetRoutes')]",
+    "FGProtectedAddress": "[parameters('fortiGateIP2')]",
+    "FGPubFacingAddress": "[parameters('fortiGateIP1')]",
+    "routeTable1BName": "[concat(variables('vm2Name'),'PublicFacingSubnetRoutes')]",
+    "routeTable2BName": "[concat(variables('vm2Name'),'ProtectedSubnetRoutes')]",
+    "FGBProtectedAddress": "[parameters('fortiGateBIP2')]",
+    "FGBPubFacingAddress": "[parameters('fortiGateBIP1')]",
+    "apiVer": "2015-06-15",
+
+    "network_NIC_fg11_Name": "[concat(variables('vmName'),'Nic0')]",
+    "network_NIC_fg11_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg11_Name'))]",
+    "network_NIC_fg21_Name": "[concat(variables('vm2Name'),'Nic0')]",
+    "network_NIC_fg21_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg21_Name'))]",
+
+
+    "storage_Acct_1_Id": "[resourceId('Microsoft.Storage/storageAccounts',parameters('StorageAccountName'))]",
+
+    "storageAccountSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','storageAccount-',parameters('storageAccountNewOrExisting'),'.json')]",
+    "publicIPSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','publicip-',parameters('publicIPNewOrExistingOrNone'),'.json')]",
+    "publicIP2SetupURL": "[concat(parameters('artifactsBaseUrl'),'/','publicip2-',parameters('publicIPNewOrExistingOrNone'),'.json')]",
+    "virtualNetworkSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','vnet-',parameters('vnetNewOrExisting'),'.json')]",
+    "vMAndNICSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','vm-',parameters('VirtualMachineSize'),'.json')]"
+  },
+  "resources": [
+    {
+      "name": "SettingUpStorageAccount",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('storageAccountSetupURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "storageAccountType": {
+            "value": "[parameters('storageAccountType')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('StorageAccountName')]"
+          },
+          "storageAccountExistingRG": {
+            "value": "[parameters('storageAccountExistingRG')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('routeTable1Name')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "routes": [
+          {
+            "name": "PublicFacingtoFortigateProtected",
+            "properties": {
+              "addressPrefix": "[variables('subnet2Prefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('FGPubFacingAddress')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('routeTable2Name')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "routes": [
+          {
+            "name": "FortigateProtectedtoPublicFacing",
+            "properties": {
+              "addressPrefix": "[variables('subnet1Prefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('FGProtectedAddress')]"
+            }
+          },
+          {
+            "name": "FortigateProtectedtoDefault",
+            "properties": {
+              "AddressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIPAddress": "[variables('FGProtectedAddress')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('routeTable1BName')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "routes": [
+          {
+            "name": "PublicFacingtoFortigateProtected",
+            "properties": {
+              "addressPrefix": "[variables('subnet2Prefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('FGBPubFacingAddress')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('routeTable2BName')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "routes": [
+          {
+            "name": "FortigateProtectedtoPublicFacing",
+            "properties": {
+              "addressPrefix": "[variables('subnet1Prefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('FGBProtectedAddress')]"
+            }
+          },
+          {
+            "name": "FortigateProtectedtoDefault",
+            "properties": {
+              "AddressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIPAddress": "[variables('FGBProtectedAddress')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SettingUpVirtualNetwork",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/routeTables/', variables('routeTable1Name'))]",
+        "[concat('Microsoft.Network/routeTables/', variables('routeTable2Name'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('virtualNetworkSetupURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('virtualnetName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('virtualNetworkAddressPrefix')]"
+          },
+          "subnet1Name": {
+            "value": "[parameters('Subnet1Name')]"
+          },
+          "subnet1AddressPrefix": {
+            "value": "[parameters('Subnet1Prefix')]"
+          },
+          "subnet2Name": {
+            "value": "[parameters('Subnet2Name')]"
+          },
+          "subnet2AddressPrefix": {
+            "value": "[parameters('Subnet2Prefix')]"
+          },
+          "vnetResourceGroup": {
+            "value": "[parameters('virtualNetworkExistingRGName')]"
+          },
+          "routeTable1Name": {
+            "value": "[variables('routeTable1Name')]"
+          },
+          "routeTable2Name": {
+            "value": "[variables('routeTable2Name')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "type": "Microsoft.Resources/deployments",
+      "name": "SettingUpPublicIP2",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'SettingUpVirtualNetwork')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('publicIP2SetupURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "publicIPAddress2ResourceGroup": {
+            "value": "[parameters('publicIPAddress2ResourceGroup')]"
+          },
+          "publicIPAddress2Name": {
+            "value": "[parameters('publicIPAddress2Name')]"
+          },
+          "publicIPAddressType": {
+            "value": "[parameters('publicIPAddressType')]"
+          },
+          "dns2Name": {
+            "value": "[parameters('uniqueDnsPrefixForPublicIP2')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "type": "Microsoft.Resources/deployments",
+      "name": "SettingUpPublicIPandFollowing",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'SettingUpPublicIP2')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('publicIPSetupURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmNamePrefix": {
+            "value": "[parameters('vmNamePrefix')]"
+          },
+          "publicIPAddressName": {
+            "value": "[parameters('publicIPAddressName')]"
+          },
+          "publicIPAddressType": {
+            "value": "[parameters('publicIPAddressType')]"
+          },
+          "dnsName": {
+            "value": "[parameters('uniqueDnsPrefixForPublicIP')]"
+          },
+          "publicIPAddressResourceGroup": {
+            "value": "[parameters('publicIPAddressResourceGroup')]"
+          },
+          "publicIP2ID": {
+            "value": "[reference('Microsoft.Resources/deployments/SettingUpPublicIP2', '2015-01-01').outputs.public2IPID.value]"
+          },
+          "VMName": {
+            "value": "[variables('vmName')]"
+          },
+          "VM2Name": {
+            "value": "[variables('vm2Name')]"
+          },
+          "VNetName": {
+            "value": "[parameters('virtualnetName')]"
+          },
+          "FGPubFacingAddress": {
+            "value": "[variables('FGPubFacingAddress')]"
+          },
+          "FGBPubFacingAddress": {
+            "value": "[variables('FGBPubFacingAddress')]"
+          },
+          "subnet1Ref": {
+            "value": "[reference('Microsoft.Resources/deployments/SettingUpVirtualNetwork', '2015-01-01').outputs.subnet1ID.value]"
+          },
+          "network_NIC_fg11_Name": {
+            "value": "[variables('network_NIC_fg11_Name')]"
+          },
+          "network_NIC_fg21_Name": {
+            "value": "[variables('network_NIC_fg21_Name')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "type": "Microsoft.Resources/deployments",
+      "name": "SettingUpSecondaryNICsandVMs",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'SettingUpPublicIPandFollowing')]",
+        "[concat('Microsoft.Resources/deployments/', 'SettingUpStorageAccount')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vMAndNICSetupURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmNamePrefix": {
+            "value": "[parameters('vmNamePrefix')]"
+          },
+          "vmName": {
+            "value": "[variables('vmName')]"
+          },
+          "vm2Name": {
+            "value": "[variables('vm2Name')]"
+          },
+          "virtualnetName": {
+            "value": "[parameters('virtualnetName')]"
+          },
+          "subnet2Ref": {
+            "value": "[reference('Microsoft.Resources/deployments/SettingUpVirtualNetwork', '2015-01-01').outputs.subnet2ID.value]"
+          },
+          "FGProtectedAddress": {
+            "value": "[variables('FGProtectedAddress')]"
+          },
+          "FGBProtectedAddress": {
+            "value": "[variables('FGBProtectedAddress')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "StorageAccountName": {
+            "value": "[parameters('StorageAccountName')]"
+          },
+          "VirtualMachineSize": {
+            "value": "[parameters('VirtualMachineSize')]"
+          },
+          "network_NIC_fg11_Id": {
+            "value": "[variables('network_NIC_fg11_Id')]"
+          },
+          "network_NIC_fg21_Id": {
+            "value": "[variables('network_NIC_fg21_Id')]"
+          }
+        }
+      }
+    }
+  ]
+}
