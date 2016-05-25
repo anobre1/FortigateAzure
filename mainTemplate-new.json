@@ -135,7 +135,6 @@
         "description": "Subnet 3 (DMZ) Name"
       }
     },
-    
     "fortiGateIP1": {
       "type": "string",
       "defaultValue": "10.190.158.10",
@@ -310,6 +309,7 @@
         }
       }
     },
+	{
       "apiVersion": "2015-01-01",
       "type": "Microsoft.Resources/deployments",
       "name": "SettingUpSecondaryNICsandVMs",
