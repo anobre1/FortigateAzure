@@ -129,7 +129,7 @@
               "properties": {
                 "primary": true
               },
-              "id": "[parameters('network_NIC_fg11_Id')]"
+              "id": "[variables('network_NIC_fg11_Id')]"
             },
             {
               "properties": {
@@ -211,7 +211,7 @@
               "properties": {
                 "primary": true
               },
-              "id": "[parameters('network_NIC_fg21_Id')]"
+              "id": "[variables('network_NIC_fg21_Id')]"
             },
             {
               "properties": {
