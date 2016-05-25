@@ -46,9 +46,9 @@
   "variables": {
     "apiVer": "2015-06-15",
     "network_NIC_fg11_Name": "AZNA-NI-FWA-outside",
-    "network_NIC_fg11_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg12_Name'))]",
+    "network_NIC_fg11_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg11_Name'))]",
     "network_NIC_fg21_Name": "AZNA-NI-FWA-inside",
-    "network_NIC_fg21_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg22_Name'))]",	
+    "network_NIC_fg21_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg21_Name'))]",	
     "network_NIC_fg12_Name": "AZNA-NI-FWB-outside",
     "network_NIC_fg12_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg12_Name'))]",
     "network_NIC_fg22_Name": "AZNA-NI-FWB-inside",
