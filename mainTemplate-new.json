@@ -200,6 +200,7 @@
     "VNetName": "[parameters('virtualnetName')]",
     "Subnet1Name": "[parameters('Subnet1Name')]",
     "Subnet2Name": "[parameters('Subnet2Name')]",
+	"Subnet3Name": "[parameters('Subnet2Name')]",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('VNetName'))]",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', variables('Subnet1Name'))]",
     "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', variables('Subnet2Name'))]",
@@ -234,7 +235,7 @@
 
     "storage_Acct_1_Id": "[resourceId('Microsoft.Storage/storageAccounts',parameters('StorageAccountName'))]",
 
-    "storageAccountSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','storageAccount-',parameters('storageAccountNewOrExisting'),'.json')]",
+    "storageAccountSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','storageAccount',parameters('storageAccountNewOrExisting'),'.json')]",
     "virtualNetworkSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','vnet-',parameters('vnetNewOrExisting'),'.json')]",
     "vMAndNICSetupURL": "[concat(parameters('artifactsBaseUrl'),'/','vm-',parameters('VirtualMachineSize'),'.json')]"
   },
@@ -358,12 +359,6 @@
           },
           "VirtualMachineSize": {
             "value": "[parameters('VirtualMachineSize')]"
-          },
-          "network_NIC_fg11_Id": {
-            "value": "[variables('network_NIC_fg11_Id')]"
-          },
-          "network_NIC_fg21_Id": {
-            "value": "[variables('network_NIC_fg21_Id')]"
           }
         }
       }

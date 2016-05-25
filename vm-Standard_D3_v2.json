@@ -40,33 +40,23 @@
     },
     "VirtualMachineSize": {
       "type": "string"
-    },
-    "network_NIC_fg11_Id": {
-      "type": "string"
-    },
-    "network_NIC_fg21_Id": {
-      "type": "string"
     }
   },
 
   "variables": {
     "apiVer": "2015-06-15",
-    "network_NIC_fg11_Name": "[concat(parameters('vmName'),'Nic1')]",
+    "network_NIC_fg11_Name": "AZNA-NI-FWA-outside",
     "network_NIC_fg11_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg12_Name'))]",
-    "network_NIC_fg21_Name": "[concat(parameters('vm2Name'),'Nic1')]",
+    "network_NIC_fg21_Name": "AZNA-NI-FWA-inside",
     "network_NIC_fg21_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg22_Name'))]",	
-    "network_NIC_fg12_Name": "[concat(parameters('vmName'),'Nic1')]",
+    "network_NIC_fg12_Name": "AZNA-NI-FWB-outside",
     "network_NIC_fg12_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg12_Name'))]",
-    "network_NIC_fg22_Name": "[concat(parameters('vm2Name'),'Nic1')]",
+    "network_NIC_fg22_Name": "AZNA-NI-FWB-inside",
     "network_NIC_fg22_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg22_Name'))]",
-    "network_NIC_fg13_Name": "[concat(parameters('vmName'),'Nic2')]",
+    "network_NIC_fg13_Name": "AZNA-NI-FWA-dmz",
     "network_NIC_fg13_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg13_Name'))]",
-    "network_NIC_fg23_Name": "[concat(parameters('vm2Name'),'Nic2')]",
+    "network_NIC_fg23_Name": "AZNA-NI-FWB-dmz",
     "network_NIC_fg23_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg23_Name'))]",
-    "network_NIC_fg14_Name": "[concat(parameters('vmName'),'Nic3')]",
-    "network_NIC_fg14_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg14_Name'))]",
-    "network_NIC_fg24_Name": "[concat(parameters('vm2Name'),'Nic3')]",
-    "network_NIC_fg24_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg24_Name'))]",
     "compute_AvailabilitySet_FG_Name": "[concat(parameters('vmNamePrefix'),'AvailabilitySet')]",
     "compute_AvailabilitySet_FG_Id": "[resourceId('Microsoft.Compute/availabilitySets', variables('compute_AvailabilitySet_FG_Name'))]"
   },
@@ -133,6 +123,28 @@
             }
           ]
         },
+		"networkProfile": {
+          "networkInterfaces": [
+            {
+              "properties": {
+                "primary": true
+              },
+              "id": "[parameters('network_NIC_fg11_Id')]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[variables('network_NIC_fg12_Id')]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[variables('network_NIC_fg13_Id')]"
+            }
+          ]
+        }
       }
     },
 
@@ -194,6 +206,28 @@
             }
           ]
         },
+		"networkProfile": {
+          "networkInterfaces": [
+            {
+              "properties": {
+                "primary": true
+              },
+              "id": "[parameters('network_NIC_fg11_Id')]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[variables('network_NIC_fg12_Id')]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[variables('network_NIC_fg13_Id')]"
+            }
+          ]
+        }
       }
     }
   ]
