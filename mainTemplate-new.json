@@ -65,20 +65,6 @@
         "description": "Password for the Virtual Machine."
       }
     },
-    "uniqueDnsPrefixForPublicIP": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Unique DNS Prefix for the First Public IP used to access the Virtual Machine."
-      }
-    },
-     "uniqueDnsPrefixForPublicIP2": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Unique DNS Prefix for the Second Public IP used to access the Virtual Machine."
-      }
-    },
     "virtualnetName": {
       "type": "string",
       "defaultValue": "AZNA-VN-Prod",
@@ -281,101 +267,9 @@
       }
     },
     {
-      "type": "Microsoft.Network/routeTables",
-      "name": "[variables('routeTable1Name')]",
-      "apiVersion": "[variables('apiVer')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "routes": [
-          {
-            "name": "PublicFacingtoFortigateProtected",
-            "properties": {
-              "addressPrefix": "[variables('subnet2Prefix')]",
-              "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[variables('FGPubFacingAddress')]"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/routeTables",
-      "name": "[variables('routeTable2Name')]",
-      "apiVersion": "[variables('apiVer')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "routes": [
-          {
-            "name": "FortigateProtectedtoPublicFacing",
-            "properties": {
-              "addressPrefix": "[variables('subnet1Prefix')]",
-              "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[variables('FGProtectedAddress')]"
-            }
-          },
-          {
-            "name": "FortigateProtectedtoDefault",
-            "properties": {
-              "AddressPrefix": "0.0.0.0/0",
-              "nextHopType": "VirtualAppliance",
-              "nextHopIPAddress": "[variables('FGProtectedAddress')]"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/routeTables",
-      "name": "[variables('routeTable1BName')]",
-      "apiVersion": "[variables('apiVer')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "routes": [
-          {
-            "name": "PublicFacingtoFortigateProtected",
-            "properties": {
-              "addressPrefix": "[variables('subnet2Prefix')]",
-              "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[variables('FGBPubFacingAddress')]"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/routeTables",
-      "name": "[variables('routeTable2BName')]",
-      "apiVersion": "[variables('apiVer')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "routes": [
-          {
-            "name": "FortigateProtectedtoPublicFacing",
-            "properties": {
-              "addressPrefix": "[variables('subnet1Prefix')]",
-              "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[variables('FGBProtectedAddress')]"
-            }
-          },
-          {
-            "name": "FortigateProtectedtoDefault",
-            "properties": {
-              "AddressPrefix": "0.0.0.0/0",
-              "nextHopType": "VirtualAppliance",
-              "nextHopIPAddress": "[variables('FGBProtectedAddress')]"
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "SettingUpVirtualNetwork",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Network/routeTables/', variables('routeTable1Name'))]",
-        "[concat('Microsoft.Network/routeTables/', variables('routeTable2Name'))]"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -416,106 +310,10 @@
         }
       }
     },
-    {
-      "apiVersion": "2015-01-01",
-      "type": "Microsoft.Resources/deployments",
-      "name": "SettingUpPublicIP2",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'SettingUpVirtualNetwork')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('publicIP2SetupURL')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "publicIPAddress2ResourceGroup": {
-            "value": "[parameters('publicIPAddress2ResourceGroup')]"
-          },
-          "publicIPAddress2Name": {
-            "value": "[parameters('publicIPAddress2Name')]"
-          },
-          "publicIPAddressType": {
-            "value": "[parameters('publicIPAddressType')]"
-          },
-          "dns2Name": {
-            "value": "[parameters('uniqueDnsPrefixForPublicIP2')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2015-01-01",
-      "type": "Microsoft.Resources/deployments",
-      "name": "SettingUpPublicIPandFollowing",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'SettingUpPublicIP2')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('publicIPSetupURL')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "vmNamePrefix": {
-            "value": "[parameters('vmNamePrefix')]"
-          },
-          "publicIPAddressName": {
-            "value": "[parameters('publicIPAddressName')]"
-          },
-          "publicIPAddressType": {
-            "value": "[parameters('publicIPAddressType')]"
-          },
-          "dnsName": {
-            "value": "[parameters('uniqueDnsPrefixForPublicIP')]"
-          },
-          "publicIPAddressResourceGroup": {
-            "value": "[parameters('publicIPAddressResourceGroup')]"
-          },
-          "publicIP2ID": {
-            "value": "[reference('Microsoft.Resources/deployments/SettingUpPublicIP2', '2015-01-01').outputs.public2IPID.value]"
-          },
-          "VMName": {
-            "value": "[variables('vmName')]"
-          },
-          "VM2Name": {
-            "value": "[variables('vm2Name')]"
-          },
-          "VNetName": {
-            "value": "[parameters('virtualnetName')]"
-          },
-          "FGPubFacingAddress": {
-            "value": "[variables('FGPubFacingAddress')]"
-          },
-          "FGBPubFacingAddress": {
-            "value": "[variables('FGBPubFacingAddress')]"
-          },
-          "subnet1Ref": {
-            "value": "[reference('Microsoft.Resources/deployments/SettingUpVirtualNetwork', '2015-01-01').outputs.subnet1ID.value]"
-          },
-          "network_NIC_fg11_Name": {
-            "value": "[variables('network_NIC_fg11_Name')]"
-          },
-          "network_NIC_fg21_Name": {
-            "value": "[variables('network_NIC_fg21_Name')]"
-          }
-        }
-      }
-    },
-    {
       "apiVersion": "2015-01-01",
       "type": "Microsoft.Resources/deployments",
       "name": "SettingUpSecondaryNICsandVMs",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'SettingUpPublicIPandFollowing')]",
         "[concat('Microsoft.Resources/deployments/', 'SettingUpStorageAccount')]"
       ],
       "properties": {
